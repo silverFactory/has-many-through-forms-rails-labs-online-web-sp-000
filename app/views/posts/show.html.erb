@@ -1,1 +1,26 @@
-
+<%= @post.title %><br>
+<%= @post.content %>
+<%= form_for @comment do |f| %>
+<% f.label :content %>
+<%= f.text_field :content %>
+<%= f.collection_select :user_id, @users, :id, :username, {include_blank: true} %>
+<%= f.fields_for :user_attributes, @post.users.build do |users_fields| %>
+  <%= users_fields.text_field :username %>
+<% end %>
+<%= f.hidden_field :post_id, value: @post.id %>
+<%= f.submit %>
+<% end %>
+<% @post.categories.each do |cat| %>
+<%= cat.name %>
+<% end %>
+<% @post.comments.each do |com| %>
+<%= com.user.username + " says: " + com.content %>
+<% end %>
+<h3>List of Unique Commmenters</h3>
+<% unique_users = [] %>
+<% @post.comments.each do |com| %>
+<% unique_users.include?(com.user) ? nil : unique_users << com.user %>
+<% end %>
+<% unique_users.each do |user| %>
+<%= link_to user.username, user_path(user) %>
+<% end %>
